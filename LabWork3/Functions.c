@@ -45,18 +45,31 @@ void mainMenu(FILE* textFilePointer)
 void menuForTextFile(FILE* textFilePointer)
 {
     bool isQuite = false;
-    while (!isQuite) {
-        switch (menuForTextChoice()) {
-            case 1: {
+    char fileName[] = "C:\\Users\\gaydi\\CLionProjects\\LabWork3\\textFile.txt";
+    while (!isQuite)
+    {
+        switch (menuForTextChoice())
+        {
+            case 1:
+            {
                 char sourceString[] = "This line was created to debug this program.";
-                inputStrings(textFilePointer, sourceString);
+                inputStrings(fileName, sourceString);
                 break;
             }
-            case 2: {
-                outputText(textFilePointer);
+            case 2:
+            {
+                outputText(fileName);
                 break;
             }
-            case 0: {
+            case 3:
+            {
+                printf("Enter a number of letter in the word to seek by: \n");
+                int number = inputValidation();
+                seekAndOutputSuitableItem(number, fileName);
+                break;
+            }
+            case 0:
+            {
                 isQuite = true;
                 break;
             }
@@ -70,6 +83,7 @@ int menuForTextChoice()
     int choice;
     printf("\t1 to input a text\n");
     printf("\t2 to output the text\n");
+    printf("\t3 to search by a set number\n");
     choice = inputValidation();
     return choice;
 }
@@ -93,18 +107,18 @@ int inputValidation()
     }
     return number;
 }
-void inputStrings(FILE* textFilePointer, char* sourceString)
+void inputStrings(char* nameOfFile, char* sourceString)
 {
-    textFilePointer = fopen("C:\\Users\\gaydi\\CLionProjects\\LabWork3\\textFile.txt", "w");
+    FILE* textFilePointer = fopen(nameOfFile, "w");
     fprintf(textFilePointer, "%s", sourceString);
 
     rewind(textFilePointer);
     fclose(textFilePointer);
 }
 
-void outputText(FILE* textFilePointer)
+void outputText(char* nameOfFile)
 {
-    textFilePointer = fopen("C:\\Users\\gaydi\\CLionProjects\\LabWork3\\textFile.txt", "r");
+    FILE* textFilePointer = fopen(nameOfFile, "r");
     char letter;
 	printf("\t\t  Source file  : \n");
 	while ((letter = getc(textFilePointer)) != EOF)
@@ -113,4 +127,66 @@ void outputText(FILE* textFilePointer)
     }
 	rewind(textFilePointer);
 	fclose(textFilePointer);
+}
+
+void seekAndOutputSuitableItem(int number, char* nameOfFile)
+{
+    char letter;
+    int counter = 0, position = 0, successfulOperations = 0;
+
+    bool isQuite = false;
+    FILE* textFilePointer = fopen(nameOfFile, "a+");
+    rewind(textFilePointer);
+    while (!isQuite)
+    {
+        while (!feof(textFilePointer))
+        {
+            fscanf(textFilePointer, "%c", &letter);
+            if (letter != ' ')
+            {
+                position++;
+                counter++;
+                break;
+            }
+            else
+            {
+                position++;
+                if (counter == number)
+                {
+                    outputWord(nameOfFile, number, position);
+                    successfulOperations++;
+                    counter = 0;
+                }
+                else
+                {
+                    counter = 0;
+                }
+            }
+        }
+        if(feof(textFilePointer))
+        {
+            isQuite = true;
+            break;
+        }
+    }
+    if (successfulOperations == 0)
+    {
+        printf("There no suitable words\n");
+    }
+    fclose(textFilePointer);
+}
+void outputWord(char* nameOfFile, int wordSize, int place)
+{
+    char letter;
+    FILE* textFilePointer = fopen(nameOfFile, "r");
+    fseek(textFilePointer,place - wordSize - 1,SEEK_SET);
+    printf("Found word: \n");
+    /*int result1 = fgetpos(textFilePointer, position);
+    int result2 = fsetpos(textFilePointer, position);*/
+    while((letter = getc(textFilePointer)) != ' ')
+    {
+        printf("%c", letter);
+    }
+    printf("\n");
+    fclose (textFilePointer);
 }

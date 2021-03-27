@@ -13,5 +13,6 @@ void menuForTextFile(FILE* textFilePointer);
 int inputValidation();
 int menu();
 int menuForTextChoice();
-void inputStrings(FILE* textFilePointer, char* sourceString);
-void outputText(FILE* textFilePointer);
+void inputStrings(char* nameOfFile, char* sourceString);
+void outputText(char* string);void outputWord(char* nameOfFile, int wordSize, int place);
+void seekAndOutputSuitableItem(int number, char* nameOfFile);
