@@ -1,4 +1,5 @@
 
+
 #include "Header.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,12 +9,13 @@
 
 int menu()
 {
+    bool isTrue = true;
     int choice;
     printf("\t1 to work with text file\n");
     printf("\t2 to work with binary file\n");
     printf("\t0 to exit\n");
     printf("Enter -----> \n");
-    choice = inputValidation();
+    choice = inputValidation(isTrue);
     return choice;
 }
 
@@ -46,6 +48,7 @@ void mainMenu(FILE* textFilePointer)
 void menuForTextFile(FILE* textFilePointer)
 {
     bool isQuite = false;
+    bool isTrue = false;
     char* fileName = (char*)calloc(20, sizeof(char));
     fileName = enterFileName(TEXTFILE, fileName);
     while (!isQuite)
@@ -66,14 +69,16 @@ void menuForTextFile(FILE* textFilePointer)
             case 3:
             {
                 printf("Enter a number of letter in the word to seek by: \n");
-                int number = inputValidation();
+                isTrue = true;
+                int number = inputValidation(isTrue);
                 seekAndOutputSuitableItem(number, fileName);
                 break;
             }
             case 4:
             {
+                isTrue = true;
                 printf("Enter a number, to reverse all words longer than you entered\n");
-                int number = inputValidation();
+                int number = inputValidation(isTrue);
                 findByItem(fileName, number);
                 break;
             }
@@ -88,23 +93,34 @@ void menuForTextFile(FILE* textFilePointer)
 }
 int menuForTextChoice()
 {
+    bool isTrue = true;
     int choice;
     printf("\t1 to input a text\n");
     printf("\t2 to output the text\n");
     printf("\t3 to search by a set number\n");
     printf("\t4 to reverse words\n");
     printf("\t0 to quite\n");
-    choice = inputValidation();
+    choice = inputValidation(isTrue);
     return choice;
 }
-int inputValidation()
+int inputValidation(bool type)
 {
     int number;
     char c;
-    while (scanf("%d%c", &number, &c) != 2 || c != '\n')
+    if (type)
     {
-        rewind(stdin);
-        printf("Try again\n");
+        while (scanf("%d%c", &number, &c) != 2 || c != '\n' || number < 0)
+        {
+            rewind(stdin);
+            printf("Try again\n");
+        }
+    }
+    else
+    {
+        while (scanf("%d%c", &number, &c) != 2 || c != '\n') {
+            rewind(stdin);
+            printf("Try again\n");
+        }
     }
     return number;
 }
@@ -276,6 +292,7 @@ void reverseWord(char* fileName, int wordLength, int endPosition)
 }
 int menuForBinaryChoice()
 {
+    bool isTrue = true;
     int choice;
     printf("\t1 to enter integers\n");
     printf("\t2 to count the number of integers, which are bigger than  sum previous integers\n");
@@ -283,7 +300,7 @@ int menuForBinaryChoice()
     printf("\t4 to output numbers\n");
     printf("\t0 to quite\n");
     printf("Enter -----> \n");
-    choice = inputValidation();
+    choice = inputValidation(isTrue);
     return choice;
 }
 void menuForBinaryFile()
@@ -341,7 +358,8 @@ void menuForBinaryFile()
                 combineTwoFilesInDescendingOrder(firstFileName, secondFileName, resultFile);
                 printf("\t1 to output result\n");
                 printf("\t0 to exit\n");
-                int choice = inputValidation();
+                bool isTrue = true;
+                int choice = inputValidation(isTrue);
                 switch(choice)
                 {
                     case 1:
@@ -371,14 +389,16 @@ void inputIntegers(char* nameOfTheFile)
     int amountOfSuccessfullyReadNumbers;
     int n, indicator = 0, amount;
     char c;
+    bool isTrue = true;
     FILE* binaryFile = fopen(nameOfTheFile, "wb");
     rewind(binaryFile);
     printf("Enter an amount of number:\n");
-    amount = inputValidation();
+    amount = inputValidation(isTrue);
     printf("Enter numbers: \n");
     while(indicator < amount)
     {
-        n = inputValidation();
+        isTrue = false;
+        n = inputValidation(isTrue);
         amountOfSuccessfullyReadNumbers = fwrite(&n, sizeof(int), 1, binaryFile);
         if (amountOfSuccessfullyReadNumbers != 1)
         {
@@ -479,17 +499,19 @@ void enterIntegerOnDescending(char* nameOfFile)
 {
     int amountOfNumbers, indicator = 0, number, amountOfSuccessfullyReadNumbers;
     int tempNumber, index  = 0;
+    bool isTrue = true;
     fpos_t position;
     printf("Enter amount of numbers you want to enter: \n");
-    scanf("%d", &amountOfNumbers);
-
+//    scanf("%d", &amountOfNumbers);
+    amountOfNumbers = inputValidation(isTrue);
+    isTrue = false;
     FILE* filePointer = fopen(nameOfFile, "wb");
     printf("Enter a numbers: \n");
     rewind(filePointer);
     while(indicator < amountOfNumbers)
     {
 
-        number = inputValidation();
+        number = inputValidation(isTrue);
         if (index == 0)
         {
             amountOfSuccessfullyReadNumbers = fwrite(&number, sizeof(int), 1, filePointer);
@@ -508,7 +530,7 @@ void enterIntegerOnDescending(char* nameOfFile)
             while (number > tempNumber)
             {
                 printf("Please try again. Enter a number less than the previous one\n");
-                number = inputValidation();
+                number = inputValidation(isTrue);
             }
             amountOfSuccessfullyReadNumbers = fwrite(&number, sizeof(int), 1, filePointer);
             if (amountOfSuccessfullyReadNumbers != 1)
@@ -564,11 +586,12 @@ void enterIntegerOnDescending(char* nameOfFile)
 
 int menuForSortFiles()
 {
+    bool isTrue = true;
     int choice;
     printf("\t1 to output content from the first file\n");
     printf("\t2 to output content from the second file\n");
     printf("\t0 to quite\n");
-    choice = inputValidation();
+    choice = inputValidation(isTrue);
     return choice;
 }
 
