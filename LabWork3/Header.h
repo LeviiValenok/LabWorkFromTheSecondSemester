@@ -7,6 +7,7 @@
 
 #endif //LABWORK3_HEADER_H
 #include <stdio.h>
+#include <stdbool.h>
 
 enum fileType
 {
@@ -16,7 +17,7 @@ enum fileType
 
 void mainMenu(FILE* textFilePointer);
 void menuForTextFile(FILE* textFilePointer);
-int inputValidation();
+int inputValidation(bool type);
 int menu();
 int menuForTextChoice();
 void inputStrings(char* nameOfFile);
