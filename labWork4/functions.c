@@ -1,5 +1,4 @@
 
-
 #include "Header.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -138,6 +137,7 @@ int rightChoice()
 void mainMenu()
 {
     bool isQuite = false;
+    char* nameOfFile;
     struct geometricShapes* topOfTheStack = NULL;
     while(!isQuite)
     {
@@ -165,7 +165,12 @@ void mainMenu()
             }
             case 5:
             {
-                menuForLoad(topOfTheStack);
+                nameOfFile = menuForSave(topOfTheStack);
+                break;
+            }
+            case 6:
+            {
+                menuForLoadFromFile(nameOfFile, &topOfTheStack);
                 break;
             }
             case 0:
@@ -470,14 +475,27 @@ int menuForLoadAsFileChoice()
     return choice;
 }
 
-void menuForLoad(struct geometricShapes* topOfStack)
+int menuForLoadFromFileChoice()
 {
+    bool isType = true;
+    int choice;
+    printf("\n");
+    printf("\t 1 to load from text file\n");
+    printf("\t 2 to load from binary file\n");
+    printf("\t0 to quite\n");
+    choice = inputValidation(isType);
+    return choice;
+}
 
+char* menuForSave(struct geometricShapes* topOfStack)
+{
+    char* nameOfTheFile;
     switch(menuForLoadAsFileChoice())
     {
         case 1:
         {
-            loadAsTextFile(topOfStack);
+            nameOfTheFile = saveAsTextFile(topOfStack);
+            return nameOfTheFile;
             break;
         }
         case 2:
@@ -541,7 +559,7 @@ char* enterFileName(enum fileType type, char* fileName)
 
 }
 
-void loadAsTextFile(struct geometricShapes* topOfStack)
+char* saveAsTextFile(struct geometricShapes* topOfStack)
 {
     int n = 69;
     char* nameOfTheFile = enterFileName(TEXTFILE, nameOfTheFile);
@@ -581,6 +599,7 @@ void loadAsTextFile(struct geometricShapes* topOfStack)
         topOfStack = topOfStack->nextItem;
     }
     fclose(textFilePointer);
+    return nameOfTheFile;
 }
 
 void outputFigureToFle(struct geometricShapes* pointer, FILE* textFilePointer)
@@ -596,3 +615,117 @@ void outputFigureToFle(struct geometricShapes* pointer, FILE* textFilePointer)
                (pointer)->information.color);
     }
 }
+
+void menuForLoadFromFile(char* fileName, struct geometricShapes** topOfStack)
+{
+
+    switch(menuForLoadAsFileChoice())
+    {
+        case 1:
+        {
+            loadFromTextFile(&topOfStack, fileName);
+            break;
+        }
+        case 2:
+        {
+            break;
+        }
+    }
+}
+
+/*void loadFromTextFile(struct geometricShapes** topOfStack, char* fileName)
+{
+    bool isType = false;
+    struct geometricShapes* copyOfStack = *topOfStack;
+    struct geometricShapes* tempStack = *topOfStack;
+    FILE* filePointer = fopen(fileName, "r");
+    while(!isType)
+    {
+        if(feof(filePointer))
+        {
+            isType = true;
+            break;
+        }
+        if (!(*topOfStack = (struct geometricShapes*)calloc(1, sizeof(struct  geometricShapes))))
+        {
+            printf("Memory is not allocated\n");
+            return;
+        }
+        fscanf(filePointer, "%d", &(*topOfStack)->square);
+        fgets((*topOfStack)->name, 20, filePointer);
+        if ((*topOfStack)->flag)
+        {
+            fscanf(filePointer, "%fl", &(*topOfStack)->information.perimeter);
+        }
+        else
+        {
+            fgets((*topOfStack)->information.color, 20, filePointer);
+        }
+        (*topOfStack)->nextItem = copyOfStack;
+        copyOfStack = *topOfStack;
+    }
+    while ()
+    fclose(filePointer);
+}*/
+
+void loadFromTextFile(struct geometricShapes** topOfStack, char* fileName)
+{
+    bool isType = false;
+    struct geometricShapes* copyOfStack = *topOfStack;
+    struct geometricShapes* tempStack = *topOfStack;
+    FILE* filePointer = fopen(fileName, "r");
+    while(!isType)
+    {
+        if(feof(filePointer))
+        {
+            isType = true;
+            break;
+        }
+        if (!(copyOfStack = (struct geometricShapes*)calloc(1, sizeof(struct  geometricShapes))))
+        {
+            printf("Memory is not allocated\n");
+            return;
+        }
+        fscanf(filePointer, "%d", &(copyOfStack)->square);
+        fgets((copyOfStack )->name, 20, filePointer);
+        if ((copyOfStack )->flag)
+        {
+            fscanf(filePointer, "%fl", &(copyOfStack)->information.perimeter);
+        }
+        else
+        {
+            fgets((copyOfStack)->information.color, 20, filePointer);
+        }
+        (copyOfStack)->nextItem = tempStack;
+        tempStack = copyOfStack;
+    }
+//    while (copyOfStack)
+//    {
+//        Push()
+//    }
+//    while (!IsEmpty(stack))
+//    {
+//        Push(&newstack, Pop(&stack));
+//    }
+        fclose(filePointer);
+}
+
+//struct geometricShapes* push(struct geometricShapes** topOfStack, struct geometricShapes* item)
+//{
+//    struct geometricShapes *pointer = (struct geometricShapes *)calloc(1, sizeof(struct geometricShapes));
+//    pointer = item;
+//    pointer->nextItem = *topOfStack;
+//    *topOfStack = pointer;
+//
+//    return *topOfStack;
+//}
+//
+//struct geometricShapes* pop(struct geometricShapes** topOfStack)
+//{
+//    struct geometricShapes* pointer = *topOfStack;
+//    *topOfStack = pointer->nextItem;
+//    int value = node->value;
+//    free(node);
+//
+//    return value;
+//}
