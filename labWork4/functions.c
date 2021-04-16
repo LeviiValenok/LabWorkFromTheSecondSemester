@@ -39,10 +39,8 @@ int menuForChoice ()
     printf("\t2 to output elements\n");
     printf("\t3 to delete item from stack\n");
     printf("\t4 to seek by option\n");
-    printf("\t5 to save list as text file\n");
-    printf("\t6 to load list from text file\n");
-    printf("\t7 to save list as binary file\n");
-    printf("\t8 to load list from binary file\n");
+    printf("\t5 to save as file\n");
+    printf("\t6 to load list from file\n");
     printf("\t0 to exit\n");
     printf("Enter ---->");
     choice = inputValidation(isTrue);
@@ -163,6 +161,11 @@ void mainMenu()
             case 4:
             {
                 seekByOptions(&topOfTheStack);
+                break;
+            }
+            case 5:
+            {
+                menuForLoad(topOfTheStack);
                 break;
             }
             case 0:
@@ -320,7 +323,7 @@ void seekByOptions(struct geometricShapes** topOfStack)
             }
             case 2:
             {
-
+                seekByFloats(*topOfStack); //check it
                 break;
             }
             case 3:
@@ -426,5 +429,170 @@ void seekByIntegers(struct geometricShapes* topOfStack)
     if (index == 0)
     {
         printf("There is no items with this square\n");
+    }
+}
+
+void seekByFloats(struct geometricShapes* topOfStack)
+{
+    int index = 0;
+    printf("Enter a float to seek by it: \n");
+    float number = inputValidationForFloat();
+    if (topOfStack->flag)
+    {
+        do
+        {
+            if(topOfStack->information.perimeter == number)
+            {
+                printLine();
+                outputFigure(topOfStack);
+                printLine();
+                index++;
+            }
+            (topOfStack) = (topOfStack)->nextItem;
+        }while(topOfStack);
+        if (index == 0)
+        {
+            printf("There is no items with this square\n");
+        }
+    }
+
+}
+
+int menuForLoadAsFileChoice()
+{
+    bool isType = true;
+    int choice;
+    printf("\n");
+    printf("\t1 to load as text file\n");
+    printf("\t2 to load as binary file\n");
+    printf("\t0 to quite\n");
+    choice = inputValidation(isType);
+    return choice;
+}
+
+void menuForLoad(struct geometricShapes* topOfStack)
+{
+
+    switch(menuForLoadAsFileChoice())
+    {
+        case 1:
+        {
+            loadAsTextFile(topOfStack);
+            break;
+        }
+        case 2:
+        {
+            break;
+        }
+        case 0:
+        {
+            break;
+        }
+    }
+}
+
+char* enterFileName(enum fileType type, char* fileName)
+{
+//    char* fileName[20];
+    char letter;
+    int i = 0;
+    printf("Enter a name of the file\n");
+    rewind(stdin);
+    while (fileName[i] != '\n')
+    {
+        scanf("%c", &fileName[i]);
+        if (fileName[i] == '.' || fileName[i] == '*' || fileName[i] == '/' || (fileName[i] == ':')
+            || fileName[i] == '[' || fileName[i] == ']' || fileName[i] == '+' || fileName[i] == '-'
+            || fileName[i] == ';' || fileName[i] == ',')
+        {
+            printf("Incorrect name of the file. Try again\n");
+            fileName[0] = '\0';
+            rewind(stdin);
+            i = 0;
+            continue;
+        }
+        if (fileName[i] == '\n')
+        {
+            break;
+        }
+        i++;
+    }
+
+    switch(type)
+    {
+        case 1:
+        {
+            fileName[strlen(fileName)-1] = '\0';
+            char expansion[5] = ".bin";
+            strcat(fileName, expansion);
+            return fileName;
+            break;
+        }
+        case 2:
+        {
+            fileName[strlen(fileName)-1] = '\0';
+            char expansion[5] = ".txt";
+            strcat(fileName, expansion);
+            return fileName;
+            break;
+        }
+    }
+
+
+}
+
+void loadAsTextFile(struct geometricShapes* topOfStack)
+{
+    int n = 69;
+    char* nameOfTheFile = enterFileName(TEXTFILE, nameOfTheFile);
+
+    FILE* textFilePointer = fopen(nameOfTheFile, "w+");
+    if (textFilePointer == NULL)
+    {
+        perror("Error occured while opening file\n");
+        exit(0);
+    }
+    char table[] = "F i g u r ' s  t a b l e";
+    fprintf(textFilePointer, "\n");
+    for (int i = 0; i < n; i++)
+    {
+        fprintf(textFilePointer, "%c", '-');
+    }
+    fprintf(textFilePointer, "\n");
+    fprintf(textFilePointer, "|\t\t\t%-44s|\n", table);
+    for (int i = 0; i < n; i++)
+    {
+        fprintf(textFilePointer, "%c", '-');
+    }
+    fprintf(textFilePointer, "\n");
+    fprintf(textFilePointer, "|\t%-10s|\t\t%-12s|\t%-20s|\n", "SQUARE", "NAME", "PERIMETER/COLOR");
+    for (int i = 0; i < n; i++)
+    {
+        fprintf(textFilePointer, "%c", '-');
+    }
+    while (topOfStack)
+    {
+        fprintf(textFilePointer, "\n");
+        outputFigureToFle(topOfStack, textFilePointer);
+        for (int i = 0; i < n; i++)
+        {
+            fprintf(textFilePointer, "%c", '-');
+        }
+        topOfStack = topOfStack->nextItem;
+    }
+    fclose(textFilePointer);
+}
+
+void outputFigureToFle(struct geometricShapes* pointer, FILE* textFilePointer)
+{
+    if ((pointer)->flag)
+    {
+        fprintf(textFilePointer, "|\t%-10d|\t%-20s|\t%-20.3f|\n", (pointer)->square, (pointer)->name,
+               (pointer)->information.perimeter);
+    }
+    else
+    {
+        fprintf(textFilePointer, "|\t%-10d|\t%-20s|\t%-20s|\n", (pointer)->square, (pointer)->name,
+               (pointer)->information.color);
     }
 }
