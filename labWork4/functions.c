@@ -1,6 +1,3 @@
-//
-// Created by gaydi on 14.04.2021.
-//
 
 #include "Header.h"
 #include <stdlib.h>
@@ -9,6 +6,7 @@
 #include <stdbool.h>
 #include <locale.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 int inputValidation(bool type)
 {
@@ -63,9 +61,9 @@ void pushToStack(struct geometricShapes** topOfStack)
         enterArrayOfStructure(*topOfStack);
         (*topOfStack)->nextItem = item;
         item = *topOfStack;
-        printf("Do you want to add more?\n");
-        printf("\1 to add more\n");
-        printf("\2 to quite\n");
+        printf("\tDo you want to add more?\n");
+        printf("\t1 to add more\n");
+        printf("\t2 to quite\n");
         switch(rightChoice())
         {
             case 1:
@@ -159,6 +157,11 @@ void mainMenu()
             case 3:
             {
                 menuForDelete(&topOfTheStack);
+                break;
+            }
+            case 4:
+            {
+                seekByOptions(&topOfTheStack);
                 break;
             }
             case 0:
@@ -305,6 +308,7 @@ void seekByOptions(struct geometricShapes** topOfStack)
         {
             case 1:
             {
+                seekByColor(topOfStack);
                 break;
             }
             case 2:
@@ -335,4 +339,60 @@ int menuForSeek()
     printf("Enter ----> ");
     int choice = inputValidation(isType);
     return choice;
+}
+
+void seekByColor(struct geometricShapes** topOfStack) {
+    struct geometricShapes *temp = *topOfStack;
+    int index = 0;
+    printf("Enter a string to compare\n");
+//    char tempString[20];
+    char *tempString = (char*) calloc(20, sizeof(char));
+    rewind(stdin);
+    gets(tempString);
+    convertToTheSameRegister(tempString);
+    while (temp->nextItem != NULL)
+    {
+        if (temp->flag)
+        {
+            continue;
+        }
+        convertToTheSameRegister(temp->information.color);
+        if (strcmp(temp->information.color, tempString) == 0)
+        {
+            index++;
+            printLine();
+            outputFigure(temp);
+            printLine();
+        }
+
+        temp = temp->nextItem;
+
+    }
+    if (index == 0)
+    {
+        printf("There is no items with this color\n");
+    }
+    return;
+}
+
+void convertToTheSameRegister(char* string)
+{
+    int i = 0;
+    while (string[i] != '\0')
+    {
+        if ((string[i] >= 'a') && (string[i] <= 'z'))
+        {
+            i++;
+            continue;
+        }
+
+
+        if ((string[i] >= 'A') && (string[i] <= 'Z'))
+        {
+            string[i] = tolower(string[i]);
+            i++;
+            continue;
+        }
+        i++;
+    }
 }
