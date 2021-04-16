@@ -1,4 +1,5 @@
 
+
 #include "Header.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -268,34 +269,40 @@ void deleteAnItem(struct geometricShapes** topOfStack, int number)
         return;
     }
     struct geometricShapes* temp = *topOfStack;                 //create new pointer and put it on the top of the stack
-    struct geometricShapes* previousElement = NULL;             //create pointer for previous element
+    struct geometricShapes* previousElement = NULL;            //create pointer for previous element
+    struct geometricShapes* deletableItem = NULL;
+    struct geometricShapes* nextElement = NULL;
     temp = *topOfStack;
     int i = 0;
-    while(i < number - 1)
-    {
-        i++;
-        temp = (temp)->nextItem;
-        if (temp == NULL)
-        {
-            break;
-        }
-
-    }
-    if(temp == *topOfStack)
+    if(number == 1)
     {
         *topOfStack = temp->nextItem;
         free(temp);
         temp->nextItem = NULL;
+        return;
     }
-    else
+    while(i < number - 2)
     {
+        i++;
+        *topOfStack = (*topOfStack)->nextItem;
+        if (temp == NULL) {
+            break;
+        }
 
-        previousElement->nextItem = temp ->nextItem;            //connect lint from previous item to next item
-        free(temp);
-        temp->nextItem = NULL;
     }
-    previousElement= temp;
-    temp = temp->nextItem;
+    previousElement = *topOfStack;
+    *topOfStack = (*topOfStack)->nextItem;
+    deletableItem = *topOfStack;
+    *topOfStack = (*topOfStack)->nextItem;
+    nextElement = *topOfStack;
+    previousElement->nextItem = nextElement;
+    *topOfStack = temp;
+    free(deletableItem);
+/*        previousElement->nextItem = temp ->nextItem;            //connect lint from previous item to next item
+        free(temp);
+        temp->nextItem = NULL;*/
+//    previousElement= temp;
+//    temp = temp->nextItem;
 
 }
 
@@ -308,15 +315,17 @@ void seekByOptions(struct geometricShapes** topOfStack)
         {
             case 1:
             {
-                seekByColor(topOfStack);
+                seekByColor(*topOfStack);
                 break;
             }
             case 2:
             {
+
                 break;
             }
             case 3:
             {
+                seekByIntegers(*topOfStack);
                 break;
             }
             case 0:
@@ -341,8 +350,7 @@ int menuForSeek()
     return choice;
 }
 
-void seekByColor(struct geometricShapes** topOfStack) {
-    struct geometricShapes *temp = *topOfStack;
+void seekByColor(struct geometricShapes* topOfStack) {
     int index = 0;
     printf("Enter a string to compare\n");
 //    char tempString[20];
@@ -350,29 +358,29 @@ void seekByColor(struct geometricShapes** topOfStack) {
     rewind(stdin);
     gets(tempString);
     convertToTheSameRegister(tempString);
-    while (temp->nextItem != NULL)
+    do
     {
-        if (temp->flag)
+        if (topOfStack->flag)
         {
             continue;
         }
-        convertToTheSameRegister(temp->information.color);
-        if (strcmp(temp->information.color, tempString) == 0)
+        convertToTheSameRegister(topOfStack->information.color);
+        if (strcmp(topOfStack->information.color, tempString) == 0)
         {
             index++;
             printLine();
-            outputFigure(temp);
+            outputFigure(topOfStack);
             printLine();
         }
 
-        temp = temp->nextItem;
+        topOfStack = topOfStack->nextItem;
 
-    }
+    }while(topOfStack);
     if (index == 0)
     {
         printf("There is no items with this color\n");
     }
-    return;
+
 }
 
 void convertToTheSameRegister(char* string)
@@ -394,5 +402,29 @@ void convertToTheSameRegister(char* string)
             continue;
         }
         i++;
+    }
+}
+
+void seekByIntegers(struct geometricShapes* topOfStack)
+{
+    int number, index = 0;
+    bool isTrue = true;
+    printf("Enter an integer to seek by it: \n");
+    number = inputValidation(isTrue);
+
+    do
+    {
+        if (topOfStack->square == number)
+        {
+            printLine();
+            outputFigure(topOfStack);
+            printLine();
+            index++;
+        }
+        (topOfStack) = (topOfStack)->nextItem;
+    } while (topOfStack);
+    if (index == 0)
+    {
+        printf("There is no items with this square\n");
     }
 }
