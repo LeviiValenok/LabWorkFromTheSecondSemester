@@ -1,12 +1,9 @@
-//
-// Created by gaydi on 14.04.2021.
-//
 
 #ifndef LABWORK4_HEADER_H
 #define LABWORK4_HEADER_H
 
 #endif //LABWORK4_HEADER_H
-
+#include <stdio.h>
 
 enum charType
 {
@@ -24,6 +21,11 @@ union perimeterAndColor
     float perimeter;
     char color[20];
 
+};
+enum fileType
+{
+    BINARYFILE = 1,
+    TEXTFILE = 2
 };
 struct geometricShapes
 {
@@ -47,3 +49,16 @@ void outputContent(struct geometricShapes* topOfTheStack);
 void deleteAnItem(struct geometricShapes** topOfStack, int number);
 void menuForDelete(struct geometricShapes** topOfStack);
 int menuForSeek();
+void convertToTheSameRegister(char* string);
+void seekByColor(struct geometricShapes* topOfStack);
+void seekByOptions(struct geometricShapes** topOfStack);
+void seekByIntegers(struct geometricShapes* topOfStack);
+void seekByFloats(struct geometricShapes* topOfStack);
+int menuForLoadAsFileChoice();
+char* enterFileName(enum fileType type, char* fileName);
+void outputFigureToFle(struct geometricShapes* pointer, FILE* textFilePointer);
+char* saveAsTextFile(struct geometricShapes* topOfStack);
+char* menuForSave(struct geometricShapes* topOfStack);
+int menuForLoadFromFileChoice();
+void menuForLoadFromFile(char* fileName, struct geometricShapes** topOfStack);
+void loadFromTextFile(struct geometricShapes** topOfStack, char* fileName);
