@@ -765,27 +765,43 @@ void loadFromBinaryFile(struct geometricShapes** topOfStack)
     rewind(binaryFile);
     while (!feof(binaryFile))
     {
-        if (!(*topOfStack = (struct geometricShapes*)calloc(1, sizeof(struct geometricShapes))))
+        if (!(copyOfStack = (struct geometricShapes*)calloc(1, sizeof(struct geometricShapes))))
         {
             printf("Memory was not allocated\n");
             return;
         }
         if (copyOfStack ->flag)
         {
-//            fgets((copyOfStack)->name, 20 , binaryFile);
-            fscanf(binaryFile, "%s", &(copyOfStack)->name, sizeof((copyOfStack)->name));
+            fgets((copyOfStack)->name, 20 , binaryFile);
+            deleteSymbols((copyOfStack)->name);
+//            fscanf(binaryFile, "%s", &(copyOfStack)->name);
             fscanf(binaryFile, "%d", &(copyOfStack)->square);
             fscanf(binaryFile, "%fl", &(copyOfStack)->information.perimeter);
         }
         else
         {
-//            fgets((copyOfStack)->name, 20, binaryFile);
-            fscanf(binaryFile, "%s", &(copyOfStack)->name, sizeof((copyOfStack)->name));
+            fgets((copyOfStack)->name, 20, binaryFile);
+            deleteSymbols((copyOfStack)->name);
+//            fscanf(binaryFile, "%s", &(copyOfStack)->name);
             fscanf(binaryFile, "%d", &(copyOfStack)->square);
-            fscanf(binaryFile, "%s", &(copyOfStack)->information.color);
+//            fscanf(binaryFile, "%s", &(copyOfStack)->information.color);
+            fgets((copyOfStack)->information.color, 20, binaryFile);
+            deleteSymbols((copyOfStack)->information.color);
         }
         (copyOfStack)->nextItem = tempStack;
         tempStack = copyOfStack;
     }
     fclose(binaryFile);
+}
+void deleteSymbols(char* string)
+{
+    int i = 0;
+    while (string[i] != '\0')
+    {
+        if (string[i] == '\n')
+        {
+            string[i] = '\0';
+        }
+        i++;
+    }
 }
