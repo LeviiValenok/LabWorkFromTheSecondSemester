@@ -500,6 +500,8 @@ char* menuForSave(struct geometricShapes* topOfStack)
         }
         case 2:
         {
+            nameOfTheFile = saveAsBinaryFile(topOfStack);
+            return nameOfTheFile;
             break;
         }
         case 0:
@@ -628,6 +630,7 @@ void menuForLoadFromFile(char* fileName, struct geometricShapes** topOfStack)
         }
         case 2:
         {
+            loadFromBinaryFile(&topOfStack);
             break;
         }
     }
@@ -729,3 +732,60 @@ void loadFromTextFile(struct geometricShapes** topOfStack, char* fileName)
 //
 //    return value;
 //}
+
+char* saveAsBinaryFile(struct geometricShapes* topOfStack)
+{
+//    char* nameOfTheFile = enterFileName(BINARYFILE, nameOfTheFile);
+    char nameOfTheFile [] = "TestFile.bin";
+    FILE* binaryFile = fopen(nameOfTheFile, "wb");
+    while (topOfStack)
+    {
+        if (topOfStack->flag)
+        {
+            fwrite(topOfStack->name, strlen(topOfStack->name), 1, binaryFile);
+            fwrite(&(topOfStack->square), sizeof(int), 1, binaryFile);
+            fwrite(&(topOfStack->information.perimeter), sizeof(float), 1, binaryFile);
+        }
+        else
+        {
+            fwrite(topOfStack->name, strlen(topOfStack->name), 1, binaryFile);
+            fwrite(&(topOfStack->square), sizeof(int), 1, binaryFile);
+            fwrite((topOfStack->information.color), strlen(topOfStack->information.color), 1, binaryFile);
+        }
+        topOfStack = topOfStack->nextItem;
+    }
+    fclose(binaryFile);
+    return nameOfTheFile;
+}
+void loadFromBinaryFile(struct geometricShapes** topOfStack)
+{
+    FILE* binaryFile = fopen("TestFile.bin", "rb");
+    struct geometricShapes* copyOfStack = *topOfStack;
+    struct geometricShapes* tempStack = *topOfStack;
+    rewind(binaryFile);
+    while (!feof(binaryFile))
+    {
+        if (!(*topOfStack = (struct geometricShapes*)calloc(1, sizeof(struct geometricShapes))))
+        {
+            printf("Memory was not allocated\n");
+            return;
+        }
+        if (copyOfStack ->flag)
+        {
+//            fgets((copyOfStack)->name, 20 , binaryFile);
+            fscanf(binaryFile, "%s", &(copyOfStack)->name, sizeof((copyOfStack)->name));
+            fscanf(binaryFile, "%d", &(copyOfStack)->square);
+            fscanf(binaryFile, "%fl", &(copyOfStack)->information.perimeter);
+        }
+        else
+        {
+//            fgets((copyOfStack)->name, 20, binaryFile);
+            fscanf(binaryFile, "%s", &(copyOfStack)->name, sizeof((copyOfStack)->name));
+            fscanf(binaryFile, "%d", &(copyOfStack)->square);
+            fscanf(binaryFile, "%s", &(copyOfStack)->information.color);
+        }
+        (copyOfStack)->nextItem = tempStack;
+        tempStack = copyOfStack;
+    }
+    fclose(binaryFile);
+}
