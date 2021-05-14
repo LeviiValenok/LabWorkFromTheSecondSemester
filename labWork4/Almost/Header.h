@@ -60,7 +60,7 @@ void seekByOptions(struct geometricShapes** topOfStack);
 void seekByIntegers(struct geometricShapes* topOfStack);
 void seekByFloats(struct geometricShapes* topOfStack);
 int menuForLoadAsFileChoice();
-char* enterFileName(enum fileType type, char* fileName);
+char* enterFileName(enum fileType type);
 void outputFigureToFle(struct geometricShapes* pointer, FILE* textFilePointer);
 void saveAsTextFile(struct geometricShapes* topOfStack);
 char* menuForSave(struct geometricShapes* topOfStack);
